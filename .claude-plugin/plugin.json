@@ -1,7 +1,7 @@
 {
   "name": "task-agent",
   "displayName": "Task Agent",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Autonomous task workflow for Laravel teams. Task board (tasks.md), manager/backend/frontend/reviewer agents, plan checkpoints, git worktrees, Pint/Pest quality gates, draft PRs, human merge gate. Workflow layer on top of Laravel Boost: Boost owns knowledge (schema, routes, docs), task-agent owns process.",
   "author": {
     "name": "Tuhin Bepari",
