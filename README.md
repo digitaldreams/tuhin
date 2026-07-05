@@ -104,6 +104,34 @@ Bundled skills, available in every project once the plugin is installed:
 | `log-analyzer` | Laravel log diagnosis to root cause |
 | `gmail-api-laravel` | Gmail API integration reference for Laravel |
 
+SDLC pipeline skills (spec-driven: each reads/writes docs under `tasks/`):
+
+| Skill | What it does |
+|---|---|
+| `requirements` | Brutally honest analysis of `tasks/requirements.md` → `requirement_analysis.md` |
+| `architecture` | Practical web architecture design → `architecture.md` |
+| `system-design` | Concise system design doc → `system_design.md` |
+| `system-modeling` | Comprehensive UML/system models → `system_model.md` |
+| `system-model-class-er` | Class + ER diagrams → `model_classes_erd.md` |
+| `system-model-behaviour` | Sequence + State diagrams → `model_behavior.md` |
+| `model-use-cases` | Textual use cases → `model_use_cases.md` |
+| `task-breakdown` | Requirements → Epics + tasks board (`tasks.md`) |
+| `design-user-journey-map` | User journey insights → `user_journeys.md` |
+| `design-information-architecture` | IA / navigation structure → `information_architecture.md` |
+| `design-wireframe` | Page wireframes from user journeys |
+| `design-system` | Custom Tailwind v4.1+ design system (general web) |
+| `design-component-inventory` | Prioritized UI component inventory (general web) |
+| `design-component` | Next.js 15 JavaScript component generator |
+| `next-component-inventory` | Next.js 16 component inventory (VSA, shadcn/ui, RHF+Yup) |
+| `next-design-system` | Tailwind v4.1+ CSS-first design system for Next.js |
+| `next-ui-component` | Minimal production-ready Next.js 15 UI component |
+| `next-page` | Complete Next.js 15 page from existing components |
+| `next-vsa-plan` | Next.js 15 Vertical Slice Architecture folder plan |
+| `laravel-database` | Laravel schema, migrations + models plan → `database_design.md` |
+| `laravel-task-plan` | Per-task implementation plan → `plans/<task>_plan.md` |
+| `laravel-code-review` | Task implementation review vs requirements → `reviews/<task>_review.md` |
+| `laravel-security-audit` | Laravel vulnerability scan + fixes → `security_audit.md` |
+
 Plus the **`tuhin` agent** — digital twin of Tuhin Bepari: understands the
 codebase first, maps blast radius, delivers small reviewable parts, tests
 before and after every change, never over-builds.
