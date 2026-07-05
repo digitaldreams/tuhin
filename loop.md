@@ -55,9 +55,9 @@ Tags = responsible agent:
 
 ## Phase 6 — QA (end-to-end)
 
-- [ ] TASK-23 [qa] Scaffold fresh Laravel app in scratchpad (composer create-project + pint + pest; boost if non-interactive install works), git init + gh private repo — status: todo
-- [ ] TASK-24 [qa] Install plugin into e2e app (plugin CLI or copy fallback), run `/task-init`; verify: prereq report, board committed, pre-created custom `docs/requirements.md` untouched — status: todo
-- [ ] TASK-25 [qa] Seed `TASK-1 [backend] add /health endpoint with test`; run `/task-next` → plan comment + `plan-review` stop; approve; rerun → worktree, branch, gates pass, draft PR, status `review` — status: todo
-- [ ] TASK-26 [qa] Run `/task-review TASK-1` → reviewer comment on PR, status `done`, notification fired — status: todo
-- [ ] TASK-27 [qa] Failure paths: unknown tag → `blocked`; force failing test → exactly 2 retry cycles → `blocked`, worktree intact; gate.sh in non-task-agent repo → no-op — status: todo
-- [ ] TASK-28 [reviewer] Final pass: every file matches plan, loop.md all `done`, ship-ready verdict — status: todo
+- [x] TASK-23 [qa] Scaffold fresh Laravel app in scratchpad (composer create-project + pint + pest; boost if non-interactive install works), git init + gh private repo — status: done
+- [x] TASK-24 [qa] Install plugin into e2e app (plugin CLI or copy fallback), run `/task-init`; verify: prereq report, board committed, pre-created custom `docs/requirements.md` untouched — status: done
+- [x] TASK-25 [qa] Seed `TASK-1 [backend] add /health endpoint with test`; run `/task-next` → plan comment + `plan-review` stop; approve; rerun → worktree, branch, gates pass, draft PR, status `review` — status: done
+- [x] TASK-26 [qa] Run `/task-review TASK-1` → reviewer comment on PR, status `done`, notification fired — status: done
+- [x] TASK-27 [qa] Failure paths: unknown tag → `blocked`; force failing test → exactly 2 retry cycles → `blocked`, worktree intact; gate.sh in non-task-agent repo → no-op — status: done
+- [x] TASK-28 [reviewer] Final pass: every file matches plan, loop.md all `done`, ship-ready verdict — status: done
