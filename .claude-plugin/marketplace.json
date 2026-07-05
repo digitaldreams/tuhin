@@ -1,0 +1,15 @@
+{
+  "name": "task-agent-marketplace",
+  "description": "Marketplace for the task-agent plugin — autonomous task workflow for Laravel teams.",
+  "owner": {
+    "name": "Tuhin Bepari",
+    "email": "digitaldreams40@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "task-agent",
+      "source": "./",
+      "description": "Autonomous task workflow for Laravel teams — board, roles, gates, draft PRs. Requires Laravel Boost for the knowledge layer."
+    }
+  ]
+}

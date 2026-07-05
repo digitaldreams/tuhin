@@ -1,0 +1,14 @@
+- Two agent on loop. Task each other on a single file. Comments on task once agree finished.
+- On tasks mention skills. So frontend tasks will handle by a specialized frontend agent.
+- Create feature branch commit and create PR
+- Before commit check coding style
+- When human Review ?
+- Its a process once started will finished
+- Input output the process will task input  and convert to output. Along the way it trigger the few skills to complete its tasks.
+- There will be few specialized agents
+- A clear hiearchy and rules how agent communicate each others
+- There will be a manager agent who will directly talk to human and plan and distribute work to agents.
+- Each and eveyr key press/input  type post /browse and validation observe by the agents.
+- As a developer we write comments on file. Anything LLM need we reply via console/file /UI
+- One agent trigger, another based on Event
+- Specialized Environment : Input -> LLM Questions -> User Answer ->LLM Plan
