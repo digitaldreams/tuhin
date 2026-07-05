@@ -1,6 +1,10 @@
-# task-agent
+# tuhin
 
-Autonomous task workflow for Laravel teams, as a Claude Code plugin.
+Tuhin Bepari's dev identity as a Claude Code plugin: an autonomous Laravel task
+workflow plus a personal toolbox of engineering skills and a digital-twin
+implementation agent.
+
+## Part 1 — Task workflow
 
 You keep a `tasks.md` board. Agents claim a task, write a plan, wait for your
 approval, implement it in an isolated git worktree, pass quality gates
@@ -10,27 +14,27 @@ approval, implement it in an isolated git worktree, pass quality gates
 Pure content — markdown agents, skills, commands, one hook script. The runtime
 is your coding CLI.
 
-## Where it sits
+### Where it sits
 
 | Layer | Owner |
 |---|---|
 | Knowledge — schema, routes, package docs, framework conventions | [Laravel Boost](https://github.com/laravel/boost) (prerequisite) |
-| Workflow — roles, board, plan checkpoints, worktrees, gates, PRs, review | **task-agent** (this plugin) |
+| Workflow — roles, board, plan checkpoints, worktrees, gates, PRs, review | **tuhin** (this plugin) |
 
-No overlap: task-agent's agents call Boost's MCP tools instead of guessing
+No overlap: the workflow agents call Boost's MCP tools instead of guessing
 about your app.
 
 ## Install
 
 ```
-/plugin marketplace add digitaldreams/task-agent
-/plugin install task-agent@task-agent-marketplace
+/plugin marketplace add digitaldreams/tuhin
+/plugin install tuhin@tuhin-marketplace
 ```
 
 Then, inside your Laravel project:
 
 ```
-/task-agent:task-init
+/tuhin:task-init
 ```
 
 Non-destructive: existing `tasks.md`, `docs/*`, `AGENTS.md` content always wins.
@@ -53,24 +57,24 @@ Non-destructive: existing `tasks.md`, `docs/*`, `AGENTS.md` content always wins.
    ```
 3. Advance the board:
    ```
-   /task-agent:task-next
+   /tuhin:task-next
    ```
    First run produces a plan and stops (`plan-review`). Add `approved: yes`
    under the plan, run again → worktree, implementation, gates, draft PR,
    review, notification.
-4. Watch it: `/task-agent:task-status`. Re-review a PR: `/task-agent:task-review TASK-2`.
+4. Watch it: `/tuhin:task-status`. Re-review a PR: `/tuhin:task-review TASK-2`.
 
 ### Hands-off dispatch
 
-- In-session loop: `/loop 15m /task-agent:task-next`
+- In-session loop: `/loop 15m /tuhin:task-next`
 - Cron (headless):
   ```
-  */30 * * * * cd /path/to/app && claude -p "/task-agent:task-next" >> storage/logs/task-agent.log 2>&1
+  */30 * * * * cd /path/to/app && claude -p "/tuhin:task-next" >> storage/logs/task-agent.log 2>&1
   ```
 Plan checkpoints still stop for your approval; set `plan_checkpoint: off` in
 the `tasks.md` config block for trusted recipe tasks.
 
-## The rules the agents live by
+### The rules the agents live by
 
 - `tasks.md` has one writer (the manager). Implementation agents never touch it.
 - No agent-to-agent chat — communication is task status, plan comments, PR
@@ -80,6 +84,29 @@ the `tasks.md` config block for trusted recipe tasks.
 - PRs are always draft; reviewer verdicts are PASS/FAIL with diff-anchored
   findings; humans always merge.
 - Statuses: `todo → planning → plan-review → doing → review → done` | `blocked`.
+
+## Part 2 — Personal skills & digital twin
+
+Bundled skills, available in every project once the plugin is installed:
+
+| Skill | What it does |
+|---|---|
+| `understand` | Build a full mental model of a codebase/module before any change |
+| `blast-radius` | Trace the impact of a change/deletion before editing shared code |
+| `red-first` | Regression-test-first bug fixing: failing test before the fix |
+| `brutal-qa` | Adversarial pre-release QA pass with ranked findings |
+| `red-team` | Security audit of your own codebase (find + validate modes) |
+| `vsa` | Vertical Slice Architecture placement and isolation audits |
+| `readability-sweep` | Comment removal, method extraction, naming challenges |
+| `driver` | Scaffold a swappable vendor driver behind an interface |
+| `manual-test-cases` | Product-owner-runnable manual test scripts |
+| `spec-to-loop` | Convert requirement docs into loop-agent-ready spec files |
+| `log-analyzer` | Laravel log diagnosis to root cause |
+| `gmail-api-laravel` | Gmail API integration reference for Laravel |
+
+Plus the **`tuhin` agent** — digital twin of Tuhin Bepari: understands the
+codebase first, maps blast radius, delivers small reviewable parts, tests
+before and after every change, never over-builds.
 
 ## Codex / Gemini CLI
 

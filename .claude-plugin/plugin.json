@@ -1,13 +1,13 @@
 {
-  "name": "task-agent",
-  "displayName": "Task Agent",
-  "version": "0.1.1",
-  "description": "Autonomous task workflow for Laravel teams. Task board (tasks.md), manager/backend/frontend/reviewer agents, plan checkpoints, git worktrees, Pint/Pest quality gates, draft PRs, human merge gate. Workflow layer on top of Laravel Boost: Boost owns knowledge (schema, routes, docs), task-agent owns process.",
+  "name": "tuhin",
+  "displayName": "Tuhin",
+  "version": "0.2.0",
+  "description": "Tuhin's dev identity as a plugin: Laravel task workflow (board, manager/backend/frontend/reviewer agents, plan checkpoints, worktrees, Pint/Pest gates, draft PRs, human merge) plus personal engineering skills (blast-radius, red-first, brutal-qa, vsa, readability-sweep, and more) and the tuhin digital-twin implementation agent. Pairs with Laravel Boost: Boost owns knowledge, this plugin owns process.",
   "author": {
     "name": "Tuhin Bepari",
     "email": "digitaldreams40@gmail.com"
   },
-  "homepage": "https://github.com/digitaldreams/task-agent",
+  "homepage": "https://github.com/digitaldreams/tuhin",
   "license": "MIT",
-  "keywords": ["laravel", "workflow", "agents", "task-board", "automation"]
+  "keywords": ["laravel", "workflow", "agents", "task-board", "skills", "digital-twin"]
 }
