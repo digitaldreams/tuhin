@@ -65,6 +65,8 @@ Stage and commit ONLY files this init created or modified (`tasks.md`, new
 `docs/` files, `AGENTS.md`, `GEMINI.md`):
 `git commit -m "chore: initialize task-agent workflow"`.
 Dirty unrelated working tree → leave those files alone and commit only ours.
+If an `origin` remote exists, push the base branch afterwards — an unpushed
+init commit would otherwise bleed into every task PR's diff.
 
 ## 6. Report
 

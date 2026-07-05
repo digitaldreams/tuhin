@@ -71,7 +71,10 @@ The human edits the plan if needed and sets `approved: yes`. The next run picks
 it up in step 1. (`plan_checkpoint: off` → skip straight to step 4.)
 
 ### 4. Workspace
-From the main checkout:
+From the main checkout: first confirm the base branch has no commits missing
+from `origin` (`git log origin/<base>..<base>`). Unpushed commits would bleed
+into the PR diff — push the base first if they are board/docs commits from
+init; anything else → `blocked` for a human. Then:
 ```
 git worktree add ../<repo-name>-worktrees/TASK-<n> -b task/TASK-<n>
 ```
