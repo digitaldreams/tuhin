@@ -94,16 +94,12 @@ Bundled skills, available in every project once the plugin is installed:
 | `understand` | Build a full mental model of a codebase/module before any change |
 | `blast-radius` | Trace the impact of a change/deletion before editing shared code |
 | `red-first` | Regression-test-first bug fixing: failing test before the fix |
-| `brutal-qa` | Adversarial pre-release QA pass with ranked findings |
-| `red-team` | Security audit of your own codebase (find + validate modes) |
+| `brutal-qa` | Adversarial pre-release audit: QA, security, and validate modes with ranked findings |
 | `performance-audit` | Laravel perf sweep: N+1, indexes, cache, queue candidates → `performance_audit.md` |
 | `vsa` | Vertical Slice Architecture placement and isolation audits |
 | `readability-sweep` | Comment removal, method extraction, naming challenges |
-| `driver` | Scaffold a swappable vendor driver behind an interface |
 | `manual-test-cases` | Product-owner-runnable manual test scripts |
-| `spec-to-loop` | Convert requirement docs into loop-agent-ready spec files |
 | `log-analyzer` | Laravel log diagnosis to root cause |
-| `gmail-api-laravel` | Gmail API integration reference for Laravel |
 
 SDLC pipeline skills (spec-driven: each reads/writes docs under `tasks/`; frontend skills are framework-agnostic and detect the project's stack):
 
