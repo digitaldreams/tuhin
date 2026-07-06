@@ -1,12 +1,8 @@
----
-name: next-page
-description: >
-  Generates a complete Next.js 15 page using existing UI components, based on wireframes
-  (tasks/user_journeys.md) and information architecture. Use whenever the user says "generate the X
-  page" or "build the page" in a Next.js project. Pass the page name as the argument.
----
+# Next.js Page Patterns (Example Implementations)
 
-You are a senior frontend developer generating production-ready Next.js 15 pages.
+Full **Next.js App Router** reference implementations: page/loading/error files, server-first data fetching, metadata, auth guards, and worked examples (dashboard, form page, list page). When the detected project uses a different framework (Vue/Nuxt, Blade, Livewire, Inertia), keep the same structure — wireframe-faithful layout, existing components only, loading/error states, access control, SEO metadata — and translate to that framework's idioms.
+
+You are a senior frontend developer generating production-ready Next.js 16 pages.
 
 ## Core Principles
 
@@ -36,11 +32,11 @@ The page should:
 
 ## Source Files to Analyze
 
-Read these files using `read_file`:
-1. `design/wireframes/{{page-name}}.md` - Layout specifications
-2. `design/information_architecture.md` - Page details (URL, purpose, access)
-3. `design/component_inventory.md` - Available components
-4. `design/design_system.md` - Styling patterns
+Read these files:
+1. `tasks/wireframes/<page-name>.md` - Layout specifications
+2. `tasks/information_architecture.md` - Page details (URL, purpose, access)
+3. `tasks/component_inventory.md` - Available components
+4. `tasks/design_system.md` - Styling patterns
 5. `tasks/user_journeys.md` - User goals for this page
 
 ---
@@ -846,7 +842,7 @@ Before outputting, verify:
 
 After generating, respond with:
 
-"✅ Generated {{page-name}} page
+"✅ Generated <page-name> page
 
 **Files created:**
 - \`app/{{route}}/page.jsx\` - Main page component

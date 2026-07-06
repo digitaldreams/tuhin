@@ -1,12 +1,8 @@
----
-name: next-vsa-plan
-description: >
-  Generates a complete Vertical Slice Architecture folder structure for Next.js 15 based on the
-  information architecture. Use whenever the user says "VSA plan", "slice structure", or "organize the
-  Next.js folders". Laravel slice placement questions go to the vsa skill instead.
----
+# Next.js VSA Structure (Example Blueprint)
 
-You are a senior architect designing a Vertical Slice Architecture (VSA) for a Next.js 15 application.
+Complete **Next.js App Router** Vertical Slice Architecture blueprint: directory trees, import patterns, slice guidelines, naming conventions, migration notes, and FAQ. When the detected project uses a different frontend framework, keep the same slice principles — feature-based grouping, self-contained slices, shared code only at the root, one-way imports — and translate folder conventions to that framework. (Laravel backend slice placement is governed by the separate vsa skill.)
+
+You are a senior architect designing a Vertical Slice Architecture (VSA) for a Next.js 16 application.
 
 ## Core Principles of VSA
 
@@ -31,25 +27,25 @@ Generate a complete VSA folder structure based on:
 
 ## Source Files to Analyze
 
-Read these files using `read_file`:
-1. `design/information_architecture.md` - All pages and routes
-2. `design/component_inventory.md` - Components needed
+Read these files:
+1. `tasks/information_architecture.md` - All pages and routes
+2. `tasks/component_inventory.md` - Components needed
 3. `tasks/user_journeys.md` - Feature groupings
 4. `tasks/requirements.md` - Application features
-5.  `design/wireframes/*.md` - Page Wireframe
+5.  `tasks/wireframes/*.md` - Page Wireframe
 
 ---
 
 ## Output File
 
-Create: `design/vsa_structure.md`
+Create: `tasks/vsa_structure.md`
 
 ---
 
 ## VSA Structure Template
 
 ```markdown
-# VSA Architecture - Next.js 15
+# VSA Architecture - Next.js 16
 
 **Project:** [Name from requirements]
 **Generated:** [Current Date]
@@ -76,7 +72,7 @@ Vertical Slice Architecture organizes code by **feature/page** rather than by te
 \`\`\`
 frontend/
 ├── src/
-│   ├── app/                    # Next.js 15 App Router (routes only)
+│   ├── app/                    # Next.js 16 App Router (routes only)
 │   ├── features/               # Feature slices (VSA core)
 │   ├── components/             # Shared UI components
 │   ├── lib/                    # Shared utilities
@@ -525,7 +521,7 @@ frontend/
 │   └── favicon.ico
 │
 ├── src/
-│   ├── app/                           # Next.js 15 App Router
+│   ├── app/                           # Next.js 16 App Router
 │   │   ├── layout.jsx
 │   │   ├── page.jsx
 │   │   ├── loading.jsx
@@ -1015,9 +1011,9 @@ After generating the structure, verify:
 
 ## Related Documents
 
-- Component Inventory: `design/component_inventory.md`
+- Component Inventory: `tasks/component_inventory.md`
 - Design System: `design/design_system.md`
-- Information Architecture: `design/information_architecture.md`
+- Information Architecture: `tasks/information_architecture.md`
 
 ```
 
@@ -1027,7 +1023,7 @@ After generating the structure, verify:
 
 After generating, respond with:
 
-"✅ Created VSA Architecture for Next.js 15
+"✅ Created VSA Architecture for Next.js 16
 
 **Structure:**
 - [X] route groups identified

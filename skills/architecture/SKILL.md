@@ -55,7 +55,7 @@ Choose based on requirements:
 ## 4. Tech Stack
 ```
 Backend:
-  - Framework: [Laravel 12 / Symfony 7]
+  - Framework: [Laravel 13 / Symfony 7]
   - API: [REST / GraphQL (Lighthouse)]
   - ORM: [Eloquent / Doctrine]
   - Queue: [Redis Queue / RabbitMQ]

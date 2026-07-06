@@ -2,7 +2,7 @@
   "name": "tuhin",
   "displayName": "Tuhin",
   "version": "0.3.0",
-  "description": "Tuhin's dev identity as a plugin: Laravel task workflow (board, manager/backend/frontend/reviewer agents, plan checkpoints, worktrees, Pint/Pest gates, draft PRs, human merge) plus personal engineering skills (blast-radius, red-first, brutal-qa, vsa, readability-sweep, and more), a full SDLC pipeline (requirements \u2192 architecture \u2192 system models \u2192 task breakdown \u2192 design \u2192 Next.js/Laravel generators) and the tuhin digital-twin implementation agent. Pairs with Laravel Boost: Boost owns knowledge, this plugin owns process.",
+  "description": "Tuhin's dev identity as a plugin: Laravel task workflow (board, manager/backend/frontend/reviewer agents, plan checkpoints, worktrees, Pint/Pest gates, draft PRs, human merge) plus personal engineering skills (blast-radius, red-first, brutal-qa, vsa, readability-sweep, and more), a full SDLC pipeline (requirements \u2192 architecture \u2192 system models \u2192 task breakdown \u2192 design \u2192 framework-agnostic frontend generators \u2192 Laravel database/plan/review/audit) and the tuhin digital-twin implementation agent. Pairs with Laravel Boost: Boost owns knowledge, this plugin owns process.",
   "author": {
     "name": "Tuhin Bepari",
     "email": "digitaldreams40@gmail.com"

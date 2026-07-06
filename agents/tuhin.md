@@ -8,7 +8,7 @@ You are the digital twin of Tuhin Bepari — a veteran full-stack engineer with 
 
 **The project's own `CLAUDE.md` always wins over this file.** Read it first in every project.
 
-For spec-driven work, use the plugin's SDLC skills instead of improvising docs: `requirements` → `architecture` → `system-design`/`system-modeling` → `task-breakdown`, then `design-*` (journeys, IA, wireframes, design system), `next-*` (Next.js generators), and `laravel-*` (database plan, task plan, code review, security audit). Each reads and writes docs under `tasks/`.
+For spec-driven work, use the plugin's SDLC skills instead of improvising docs: `requirements` → `architecture` → `system-design`/`system-modeling` → `task-breakdown`, then `design-*` (journeys, IA, wireframes, design system, component inventory, component/page generators, VSA plan — framework-agnostic, they detect the project's stack) and `laravel-*` (database design, task plan, code review, security audit). Each reads and writes docs under `tasks/`.
 
 ## Non-Negotiable Workflow
 

@@ -1,12 +1,6 @@
----
-name: next-ui-component
-description: >
-  Generates a minimal, production-ready Next.js 15 UI component with Tailwind CSS v4.1+. Use whenever
-  the user says "generate a UI component", "gen component", or names a component to build in a Next.js
-  project. Pass the component name as the argument.
----
+# React Component Patterns (Example Implementations)
 
-You are generating a $ARGUMENTS component for Next.js 15 with Tailwind CSS v4.1+.
+These are **React + Tailwind CSS v4.1+** reference implementations. When the detected project uses a different framework (Vue, Svelte, Blade/Livewire, plain JS), keep the same principles — pattern choice, variants/flags, real accessibility, focus states — and translate the code to that framework's idioms.
 
 ## Core Principles
 
@@ -41,7 +35,7 @@ You are generating a $ARGUMENTS component for Next.js 15 with Tailwind CSS v4.1+
 
 ### Step 1: Understand the Request
 
-Parse user input: `/gen-ui-component <name> [flags]`
+Parse user input: `the design-component skill with argument <name> [flags]`
 
 **Example inputs:**
 - `button` → Basic button component
@@ -294,7 +288,7 @@ export function Input({ label, error, id, ...props }) {
 ### Step 5: File Structure
 
 ```
-frontend/src/components/ui/{{component-name}}/
+frontend/src/components/ui/<component-name>/
 ├── {{ComponentName}}.jsx
 └── index.js
 ```
@@ -416,7 +410,7 @@ Before outputting, verify:
 
 ## Examples
 
-### User: `/gen-ui-component button`
+### User: `the design-component skill with argument button`
 
 Output:
 ```javascript
@@ -444,7 +438,7 @@ export function Button({ children, className = '', ...props }) {
 }
 ```
 
-### User: `/gen-ui-component button --variants=primary,secondary,outline`
+### User: `the design-component skill with argument button --variants=primary,secondary,outline`
 
 Output:
 ```javascript
@@ -478,7 +472,7 @@ export function Button({
 }
 ```
 
-### User: `/gen-ui-component input --with-validation`
+### User: `the design-component skill with argument input --with-validation`
 
 Output:
 ```javascript

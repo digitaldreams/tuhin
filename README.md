@@ -104,7 +104,7 @@ Bundled skills, available in every project once the plugin is installed:
 | `log-analyzer` | Laravel log diagnosis to root cause |
 | `gmail-api-laravel` | Gmail API integration reference for Laravel |
 
-SDLC pipeline skills (spec-driven: each reads/writes docs under `tasks/`):
+SDLC pipeline skills (spec-driven: each reads/writes docs under `tasks/`; frontend skills are framework-agnostic and detect the project's stack):
 
 | Skill | What it does |
 |---|---|
@@ -115,19 +115,16 @@ SDLC pipeline skills (spec-driven: each reads/writes docs under `tasks/`):
 | `system-model-class-er` | Class + ER diagrams → `model_classes_erd.md` |
 | `system-model-behaviour` | Sequence + State diagrams → `model_behavior.md` |
 | `model-use-cases` | Textual use cases → `model_use_cases.md` |
-| `task-breakdown` | Requirements → Epics + tasks board (`tasks.md`) |
+| `task-breakdown` | Requirements → Epics + task breakdown → `epics.md` (task-manager converts to the board) |
 | `design-user-journey-map` | User journey insights → `user_journeys.md` |
 | `design-information-architecture` | IA / navigation structure → `information_architecture.md` |
-| `design-wireframe` | Page wireframes from user journeys |
-| `design-system` | Custom Tailwind v4.1+ design system (general web) |
-| `design-component-inventory` | Prioritized UI component inventory (general web) |
-| `design-component` | Next.js 15 JavaScript component generator |
-| `next-component-inventory` | Next.js 16 component inventory (VSA, shadcn/ui, RHF+Yup) |
-| `next-design-system` | Tailwind v4.1+ CSS-first design system for Next.js |
-| `next-ui-component` | Minimal production-ready Next.js 15 UI component |
-| `next-page` | Complete Next.js 15 page from existing components |
-| `next-vsa-plan` | Next.js 15 Vertical Slice Architecture folder plan |
-| `laravel-database` | Laravel schema, migrations + models plan → `database_design.md` |
+| `design-wireframe` | Page wireframes → `wireframes/<page>.md` |
+| `design-system` | Custom, opinionated Tailwind v4.1+ design system → `design_system.md` |
+| `design-component-inventory` | Prioritized UI component inventory → `component_inventory.md` |
+| `design-component` | UI component generator (detects React/Vue/Blade/Livewire) |
+| `design-page` | Full page from wireframe + existing components (any framework) |
+| `design-vsa-plan` | Frontend Vertical Slice Architecture folder plan → `vsa_structure.md` |
+| `laravel-database` | Laravel 13 schema, migrations + models → `database_design.md` |
 | `laravel-task-plan` | Per-task implementation plan → `plans/<task>_plan.md` |
 | `laravel-code-review` | Task implementation review vs requirements → `reviews/<task>_review.md` |
 | `laravel-security-audit` | Laravel vulnerability scan + fixes → `security_audit.md` |
