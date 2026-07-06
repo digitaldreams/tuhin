@@ -94,7 +94,8 @@ Bundled skills, available in every project once the plugin is installed:
 | `understand` | Build a full mental model of a codebase/module before any change |
 | `blast-radius` | Trace the impact of a change/deletion before editing shared code |
 | `red-first` | Regression-test-first bug fixing: failing test before the fix |
-| `brutal-qa` | Adversarial pre-release audit: QA, security, and validate modes with ranked findings |
+| `quality-audit` | Adversarial pre-release QA (audit + validate modes) → `qa_report_{date}.md` |
+| `security-audit` | Security audit of your own codebase (find + validate modes) → `security_risks_{date}.md` |
 | `performance-audit` | Laravel perf sweep: N+1, indexes, cache, queue candidates → `performance_audit.md` |
 | `vsa` | Vertical Slice Architecture placement and isolation audits |
 | `readability-sweep` | Comment removal, method extraction, naming challenges |
