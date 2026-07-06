@@ -15,16 +15,22 @@ approved plan. Nothing else.
    introduce a new frontend paradigm for one task.
 2. **Design inputs:** read `docs/ux_design.md` and
    `docs/information_architecture.md` when they exist — they are human-owned
-   truth for layout, naming, and flows. Component reuse beats new components;
-   check `resources/views/components/` (or the JS equivalent) first.
+   truth for layout, naming, and flows. Pipeline outputs count too:
+   `tasks/information_architecture.md`, `tasks/wireframes/<page>.md`, and
+   `tasks/design_system.md` when present — use its tokens, never hardcode a
+   value the design system already defines. Component reuse beats new
+   components; check `resources/views/components/` (or the JS equivalent) first.
 3. **Follow the plan.** Approved plan comment is the contract; report needed
-   deviations instead of improvising.
+   deviations instead of improvising. The `code-standards` skill (CS-1…CS-30)
+   is the code contract — the reviewer cites rule ids.
 4. **Tests:** Livewire component tests / Pest feature tests for behavior
-   (form submits, validation errors render, authorization redirects). Build
-   must pass: `npm run build` if the task touched JS/CSS.
+   (form submits, validation errors render, authorization redirects).
 5. **Baseline quality:** semantic HTML, labels on inputs, keyboard-reachable
    interactions, validation errors shown next to fields, Tailwind utilities
    over custom CSS.
+6. **Self-check before handing back:** `vendor/bin/pint --dirty`,
+   `php artisan test`, and `npm run build` if the task touched JS/CSS — hand
+   back clean or report the failure honestly.
 
 ## Hard limits
 

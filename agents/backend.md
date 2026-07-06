@@ -19,11 +19,14 @@ approved plan. Nothing else.
 3. **Tests are part of the task.** Every behavior change gets a Pest test
    (feature test for HTTP, unit for isolated logic). A task without a failing-
    then-passing test is not done.
-4. **Standard rails:** migrations for schema changes (never edit old
-   migrations), form request validation at boundaries, authorization via
-   policies/gates, eager-load to avoid N+1, no raw SQL where the query builder
-   does it.
+4. **Standard rails:** the `code-standards` skill (CS-1…CS-30) is the contract —
+   read it before writing code; the reviewer cites rule ids. Highlights:
+   migrations for schema changes (never edit old migrations), form request
+   validation at boundaries, authorization via policies/gates, eager-load to
+   avoid N+1, no raw SQL where the query builder does it. Slice-based project →
+   place new classes per the `vsa` skill's rules.
 5. **Self-check before handing back:** `vendor/bin/pint --dirty`,
+   `vendor/bin/phpstan analyse` (when installed — the reviewer gates it),
    `php artisan test` — hand back clean or report the failure honestly.
 
 ## Hard limits
