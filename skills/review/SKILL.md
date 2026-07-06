@@ -23,7 +23,8 @@ single verdict. Reviewers never push fixes — they report.
    - security at trust boundaries: validation, authorization, mass assignment,
      query injection
    - N+1 queries, unbounded queries, missing indexes for new query paths
-   - conventions: follows Laravel Boost guidelines and `docs/conventions.md`
+   - conventions: follows Laravel Boost guidelines, `docs/conventions.md`, and the
+     code-standards skill (cite CS-n in findings)
 3. **Skip entirely**: style nits Pint already enforces, hypothetical refactors,
    scope expansion ("while you're here…"), praise padding.
 

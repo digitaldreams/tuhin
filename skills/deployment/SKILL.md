@@ -18,6 +18,8 @@ Inspect (all in the target app, not this plugin repo):
 
 **If the working directory is not an application repo, stop and ask the user which app to target.**
 
+**No release tag / never deployed?** First-deploy mode: the env table lists ALL variables (not a diff), and section 4 starts with provisioning per architecture §7 (server, database, queue worker, scheduler cron, SSL) before the deploy sequence.
+
 Create `tasks/deployment.md` with this structure:
 
 ## 1. Pre-Deploy Checklist
@@ -26,7 +28,7 @@ Ordered, checkbox list: tests green, Pint clean, `.env` diff reviewed, dependenc
 
 ## 2. Environment & Config Diff
 
-Table of env vars **new or changed** this release: name, example value, which config file reads it, what breaks if missing. Flag any `env()` call outside `config/` as a bug (breaks config caching).
+Table of env vars **new or changed** this release: name, example value (**never the real secret — placeholder only**), which config file reads it, what breaks if missing. Flag any `env()` call outside `config/` as a bug (breaks config caching).
 
 ## 3. Migration Safety
 
@@ -43,11 +45,12 @@ Numbered steps for this app's actual stack (adapt, don't template): maintenance 
 
 - Code: previous release pointer/tag, one command.
 - Database: which migrations are reversible; for irreversible ones, the restore-from-backup path and its data-loss window.
+- **Trigger:** the concrete signals that mean roll back now (smoke check fails, error tracker spikes, queue depth climbing) — decided before the deploy, not during the incident.
 - The rule: **if rollback is not written down, the deploy does not happen.**
 
 ## 6. Smoke Checks
 
-5–10 concrete post-deploy probes: health endpoint, login, one critical write path, queue heartbeat (`queue:monitor` or a dispatched test job), scheduled-task freshness, error-tracker quiet.
+5–10 concrete post-deploy probes: health endpoint (no route exists → flag adding one as a pre-deploy task), login, one critical write path, queue heartbeat (`queue:monitor` or a dispatched test job), scheduled-task freshness, error-tracker quiet. Close with a watch window: how long to monitor (e.g., 15 minutes) before calling the deploy done.
 
 ## Rules
 

@@ -12,11 +12,14 @@ description: >
 
 The reader has no testing experience and no codebase knowledge. If a step can be misread, it is wrong. If a named business, button, or page doesn't exist exactly as written, the case is broken.
 
+**Scope:** write cases for what the user names (module, feature); no argument = full coverage with a module table first.
+
 ## Phase 1 — Map Reality
 
-1. Rescan the codebase for the real module/submodule list — never trust a stale doc. Produce a module table first when coverage is the goal.
+1. Rescan the codebase (within scope) for the real module/submodule list — never trust a stale doc. Produce a module table first when coverage is the goal.
 2. Read the seeders. Build an inventory of every entity they create: names, states, relationships. This inventory is the only source of test data.
 3. Read the views for the features under test: exact button labels, exact page titles, exact locations ("Full Preview & Edit — in the card footer").
+4. When `tasks/requirements.md` acceptance criteria or `tasks/user_journeys.md` exist, they define the behaviors that must have cases — map each criterion/journey step to a case id, and flag any that can't be covered.
 
 ## Phase 2 — Write Cases
 
@@ -25,8 +28,11 @@ Per case, this exact shape:
 - **ID** — module prefix + number (`BIZ-07`, `REV-03`), stable once assigned.
 - **Title** — states the behavior under test, unambiguous on its own.
 - **Preconditions** — exact setup commands (`php artisan migrate:fresh --seed`, which seeder class, which services must run: `queue:work`, `schedule:work`). Named data the case relies on, confirmed present in the seeder.
-- **Steps** — numbered clicks. Every step names its UI element exactly as rendered: "Click **Full Preview & Edit** (in the card footer)". Every entity by its real seeded name.
+- **Steps** — numbered clicks. Step 1 is always an entry point: a full URL ("Open http://localhost:8000/businesses") or a named case's end state. Every step names its UI element exactly as rendered: "Click **Full Preview & Edit** (in the card footer)". Every entity by its real seeded name.
 - **Expected result** — what the tester sees, concretely: badge color, banner text, row count, redirect target.
+- **Result** — empty `PASS / FAIL: ____` line the product owner fills in during execution.
+
+When the UI shows a failure branch (validation message, permission denial, empty state), that branch gets its own case — a PO can verify an error message as easily as a success banner.
 
 ### Rejection rules — fix before delivery, never ship these
 

@@ -1,262 +1,108 @@
 ---
 name: architecture
 description: >
-  Creates a practical web architecture design from analyzed requirements. Reads tasks/requirements.md
-  and writes tasks/architecture.md. Use whenever the user says "design the architecture",
-  "architecture doc", "create architecture.md", or as the SDLC pipeline step after requirement
-  analysis.
+  Creates a practical web architecture design from analyzed requirements, with interactive
+  decision checkpoints — the user picks ecosystem, pattern, and repo strategy from recommended
+  options. Reads tasks/requirements.md and writes tasks/architecture.md. Use whenever the user
+  says "design the architecture", "architecture doc", "create architecture.md", or as the SDLC
+  pipeline step after requirement analysis.
 ---
 
 You are a web architect. Based on tasks/requirements.md — and tasks/requirement_analysis.md when it exists — create a practical architecture design. **If tasks/requirements.md is missing, stop and ask the user for it.**
 
+## Interactive Decision Protocol
+
+Architecture decisions belong to the user, not you. BEFORE writing tasks/architecture.md:
+
+1. Read the requirements and extract signals: team size, scale expectations, timeline, SEO needs, API consumers (mobile? third-party?), domain complexity (CRUD vs rich business rules), async workload, existing code.
+2. Match signals against the "Choose X if" criteria below to derive ONE recommendation per decision.
+3. Ask the user via AskUserQuestion — **max 3 options per question, recommendation FIRST, labeled "(Recommended)"**, with the matching signals cited in its description (e.g. "(Recommended) — 2 devs, 14 CRUD features → Modular Monolith + VSA").
+
+Ask these three decisions:
+
+**Q1 — Backend ecosystem.** Laravel (recommended default for most web apps), Symfony, or a third option only if requirements clearly demand it (e.g. existing Node team).
+
+**Q2 — Architecture pattern.** Deployment + organization combined into 3 concrete options tailored to the signals (e.g. "Modular Monolith + VSA", "Monolith + Layered", "Microservices + Event-Driven"). Modular Monolith is the right recommendation for ~90% of projects.
+
+**Q3 — Repo + frontend strategy.** Monorepo with Blade, Monorepo with Inertia + Vue/React, or separate SPA repo (Next.js/Nuxt). Recommend based on SEO, team split, and API consumers.
+
+Rules: never silently pick; the user's answers are binding. Database, cache, and infrastructure get sensible defaults without a question — but every answer AND every notable default is recorded as an ADR-lite entry in section 8.
+
+## Decision Criteria
+
+**Deployment patterns:**
+- **Monolith** — one app, one deploy. Choose if: solo dev or tiny team; prototype or short timeline; low ops maturity.
+- **Modular Monolith** — modules with clear boundaries, single deployment. Choose if: 1–10 devs; long-lived product; want extraction path to services later without paying for them now. Default for most projects.
+- **Microservices** — independent services, separate scaling. Choose if: multiple teams owning separate domains; proven scale problem a monolith can't handle; mature ops (CI/CD, observability, on-call). Never for a new product with one team.
+- **Serverless** — functions, pay-per-use. Choose if: spiky/unpredictable load; event-triggered workloads; minimal ops appetite.
+- **JAMstack** — static + APIs. Choose if: content-heavy site; few dynamic features; CDN-first delivery matters.
+
+**Organization patterns:**
+- **Layered** — UI → Business → Data. Choose if: small app, few features; team knows MVC only; prototype timeline.
+- **Vertical Slice (VSA)** — feature = folder, end-to-end. Choose if: features mostly independent CRUD-to-moderate complexity; small team (1–5 devs); want locality of change; may extract modules later.
+- **DDD** — bounded contexts, domain models. Choose if: complex domain rules and invariants dominate; domain experts involved; long-lived product where model precision pays off.
+- **Event-Driven** — async events, queues. Choose if: genuine async workflows (webhooks, long jobs, integrations); eventual consistency acceptable; producers/consumers must decouple.
+- **Hexagonal / Clean** — ports & adapters, framework-independent core. Choose if: many swappable external integrations (payments, LLMs, search); heavy unit-test culture. Warning: usually overkill for Laravel CRUD — Eloquent fights it.
+- **CQRS** — not standalone; add-on to DDD/Event-Driven when read/write load is wildly asymmetric or reporting is complex vs simple writes. Event Sourcing only if an audit trail is a hard requirement.
+
+Common combinations: Modular Monolith + VSA, Modular Monolith + DDD, Microservices + Event-Driven, Layered + DDD.
+
+## Output: tasks/architecture.md
+
 Create `tasks/architecture.md` with:
 
-## 1. System Overview
-- What the system does (2-3 sentences)
+### 1. System Overview
+- What the system does (2–3 sentences)
 - Main user flows
 
-## 2. Architecture Pattern
-Pick ONE or COMBINE (explain why):
+### 2. Architecture Pattern
+The chosen pattern (from Q2) and why — cite the requirement signals that drove it.
 
-**Deployment Patterns:**
-- **Monolith** (single app, simple deployment)
-- **Modular Monolith** (modules with clear boundaries, single deployment)
-- **Microservices** (independent services, separate scaling)
-- **Serverless** (functions, pay-per-use)
-- **JAMstack** (static + APIs, fast delivery)
+### 3. Repository & Frontend Strategy
+The chosen option (from Q3) and the trade-off accepted. If multiple clients exist (web + mobile), note whether a BFF layer is warranted.
 
-**Organization Patterns:**
-- **Layered Architecture** (horizontal: UI → Business → Data layers)
-- **Vertical Slice Architecture (VSA)** (feature-based slices, end-to-end)
-- **Domain-Driven Design (DDD)** (bounded contexts, domain models)
-- **Event-Driven Architecture** (async events, message queues)
+### 4. Tech Stack
+The chosen stack (from Q1). Use current stable versions — name the framework, not a version number.
 
-**Common Combinations:**
-- Modular Monolith + VSA (features as modules, easy to extract later)
-- Modular Monolith + DDD (bounded contexts as modules)
-- Microservices + Event-Driven (services communicate via events)
-- Layered + DDD (layers within bounded contexts)
-
-## 3. Repository Strategy
-Choose based on requirements:
-
-**Option A: Monorepo (Single Repository)**
-- Laravel + Blade (traditional MVC)
-- Laravel + Inertia.js + Vue/React
-- Pros: Simple deployment, shared code, easier coordination
-- Cons: Larger repo, coupled releases
-
-**Option B: Separate Repositories**
-- Backend: Laravel/Symfony API
-- Frontend: Next.js/Nuxt.js/React/Vue SPA
-- Pros: Independent deploys, team autonomy, tech flexibility
-- Cons: API versioning, CORS, more complex setup
-
-## 4. Tech Stack
 ```
-Backend:
-  - Framework: [Laravel 13 / Symfony 7]
-  - API: [REST / GraphQL (Lighthouse)]
-  - ORM: [Eloquent / Doctrine]
-  - Queue: [Redis Queue / RabbitMQ]
-
-Frontend (if separate):
-  - Framework: [Next.js 16 / Nuxt 4 / React / Vue 3]
-  - State: [Context / Pinia / Zustand]
-  - Styling: [Tailwind CSS]
-  - Build: [Vite / Next/Nuxt built-in]
-
-Frontend (if Monorepo):
-  - Template: [Blade / Inertia.js]
-  - Assets: [Vite]
-
-Database:
-  - Primary: [MySQL 8 / PostgreSQL 17 / MariaDB]
-  - Cache: [Redis / Memcached]
-  - Search: [Meilisearch / Elasticsearch] (if needed)
-
-Infrastructure:
-  - Hosting: [AWS / DigitalOcean / Hetzner / Forge]
-  - Storage: [S3 / Local / DigitalOcean Spaces]
-  - Auth: [Laravel Sanctum / Passport / JWT]
-  - Queue Worker: [Horizon / Supervisor]
+Backend:   framework, API style (REST/GraphQL), ORM, queue
+Frontend:  framework/templating, state, styling, build tool
+Database:  primary DB, cache, search (only if needed)
+Infra:     hosting, storage, auth approach, queue worker
 ```
 
-## 5. Core Components
-Group by feature/domain (each component owns its data models and services):
+### 5. Component Boundaries
+Group by feature/domain. Per component: name, one-line responsibility, dependencies on other components. No folder internals per component, no endpoint lists — one generic structure template is enough:
 
-**Component Structure:**
 ```
 [ComponentName]/
-  ├── Models/          # Eloquent models / Doctrine entities
-  ├── Services/        # Business logic
-  ├── Controllers/     # HTTP layer (Laravel) / Actions (Symfony)
-  ├── Repositories/    # Data access (optional)
-  ├── Events/          # Domain events
-  ├── Listeners/       # Event handlers
-  └── DTOs/           # Data transfer objects
+  ├── Models/       # persistence entities
+  ├── Services/     # business logic
+  ├── Controllers/  # HTTP layer
+  └── Events/       # domain events (if event-driven)
 ```
 
-**Example Components:**
+### 6. Cross-Cutting Decisions
+Decision-level only — no implementation tips:
+- **Auth**: approach (session / Sanctum / OAuth2 / JWT) and why
+- **Caching**: needed? what layer (HTTP / app / query) and store
+- **Queues**: which workloads go async
+- **Secrets**: .env locally; secrets manager in production
 
-**UserManagement**
-- Models: User, Role, Permission
-- Services: UserService, AuthService
-- APIs:
-  - POST /api/register
-  - POST /api/login
-  - GET /api/users/{id}
-- Dependencies: EmailService, CacheService
-
-**ProductCatalog**
-- Models: Product, Category, Tag
-- Services: ProductService, SearchService
-- APIs:
-  - GET /api/products
-  - POST /api/products
-  - GET /api/products/{slug}
-- Dependencies: ImageService, CacheService
-
-**OrderProcessing**
-- Models: Order, OrderItem, Payment
-- Services: OrderService, PaymentService, InventoryService
-- APIs:
-  - POST /api/orders
-  - GET /api/orders/{id}
-  - POST /api/orders/{id}/cancel
-- Dependencies: UserManagement, ProductCatalog, NotificationService
-
-## 6. Data Models
-Key entities grouped by component:
-
-**UserManagement:**
-```php
-User
-  - id, name, email, password, email_verified_at
-  - hasMany: Orders
-  - belongsToMany: Roles
-
-Role
-  - id, name, guard_name
-  - belongsToMany: Users, Permissions
+### 7. Deployment
+```
+Environments: development / staging / production
+Hosting:      (consistent with the chosen stack)
+CI/CD:        pipeline choice
 ```
 
-**ProductCatalog:**
-```php
-Product
-  - id, name, slug, description, price, stock
-  - belongsTo: Category
-  - belongsToMany: Tags
+### 8. Key Decisions (ADR-lite) — mandatory
+One entry per interactive answer and per notable default, in this format:
 
-Category
-  - id, name, slug, parent_id
-  - hasMany: Products
-```
-
-**OrderProcessing:**
-```php
-Order
-  - id, user_id, total, status, created_at
-  - belongsTo: User
-  - hasMany: OrderItems
-
-OrderItem
-  - id, order_id, product_id, quantity, price
-  - belongsTo: Order, Product
-```
-
-**Database Indexes:**
-- users: email (unique), email_verified_at
-- products: slug (unique), category_id, (name, description) fulltext
-- orders: user_id, status, created_at
-- order_items: order_id, product_id
-
-## 7. Key Flows
-Describe top critical flows with component interactions:
-
-**Example 1: User Registration (UserManagement)**
-```
-Client → POST /api/register
-  → UserService validates input
-  → Create User model
-  → Dispatch UserRegistered event
-  → EmailService sends verification
-  → Return JWT token
-```
-
-**Example 2: Place Order (OrderProcessing + ProductCatalog + UserManagement)**
-```
-Client → POST /api/orders
-  → OrderService validates cart
-  → ProductService checks stock (ProductCatalog)
-  → Begin DB transaction
-  → Create Order + OrderItems
-  → InventoryService decreases stock
-  → PaymentService processes payment
-  → Commit transaction
-  → Dispatch OrderCreated event
-  → NotificationService sends confirmation
-  → Return order details
-```
-
-**Example 3: Product Search (ProductCatalog)**
-```
-Client → GET /api/products?search=laptop
-  → Check Redis cache
-  → If miss: SearchService queries DB/Meilisearch
-  → ProductService formats results
-  → Cache for 5 minutes
-  → Return paginated products
-```
-
-## 8. Performance & Security
-
-**Performance:**
-- **Caching**:
-  - Redis: User sessions, API responses, query results
-  - Laravel cache: Config, routes, views (php artisan optimize)
-  - HTTP: ETags, browser caching for static assets
-- **Database**:
-  - Eager loading (with() to avoid N+1)
-  - Query optimization with indexes
-  - Chunk large datasets
-- **Queue Jobs**:
-  - Email sending, image processing, reports
-  - Use Horizon for monitoring
-- **CDN**: Static assets, images via S3/Cloudflare
-
-**Security:**
-- **Auth**:
-  - Laravel Sanctum (SPA) / Passport (OAuth2) / JWT
-  - CSRF protection for Blade forms
-  - Rate limiting on auth endpoints
-- **Input Validation**:
-  - Form Requests (Laravel) / Constraints (Symfony)
-  - Sanitize user input
-- **Authorization**:
-  - Gates & Policies (Laravel) / Voters (Symfony)
-  - Role-based access control (Spatie Permission)
-- **Protection**:
-  - SQL injection: Use Eloquent/Query Builder, never raw SQL with user input
-  - XSS: Blade {{ }} auto-escapes, use {!! !!} carefully
-  - CORS: Configure allowed origins for API
-- **Environment**:
-  - .env for secrets, never commit
-  - Use a secrets manager in production (HashiCorp Vault, AWS Secrets Manager, Symfony Secrets)
-
-## 9. Deployment
-```
-Development: localhost + local DB
-Staging: [staging URL] + test DB
-Production: [prod URL] + prod DB
-
-CI/CD: GitHub Actions / Vercel Auto-deploy
-Environment vars: .env.local → deployment platform
-```
-
-## 10. Key Decisions
-Quick notes on important choices:
-- **[Decision]**: Why we chose X over Y
-- **[Trade-off]**: What we gain/lose
+- **[Decision name]**
+  - Context: the requirement signal that forced a choice
+  - Options considered: the 2–3 candidates
+  - Choice: what the user picked (or the default applied)
+  - Trade-off accepted: what we gave up
 
 Keep it practical. Focus on what a developer needs to start building.
