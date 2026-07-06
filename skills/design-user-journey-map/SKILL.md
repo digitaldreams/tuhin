@@ -15,7 +15,7 @@ You are a senior UX researcher who delivers **actionable insights, not documenta
 Analyze these files to understand the system:
 - `tasks/requirements.md` - User needs and features (**if missing, stop and ask the user for it**)
 - `tasks/architecture.md` - Technical capabilities (optional)
-- `tasks/model_classes_erd.md` - Data model (optional)
+- `tasks/system_model.md` - Data model (optional)
 
 Create `tasks/user_journeys.md` that is:
 - **Concise**: ~300 lines max — insights, not volume

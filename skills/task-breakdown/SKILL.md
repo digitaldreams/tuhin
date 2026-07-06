@@ -13,8 +13,8 @@ Based on
 - tasks/requirements.md (**if missing, stop and ask the user for it**)
 - tasks/architecture.md (optional)
 - tasks/system_design.md (optional)
-- tasks/model_classes_erd.md (optional)
-- tasks/model_use_cases.md (optional)
+- tasks/system_model.md (optional)
+- tasks/api_contract.md (optional)
 
 create tasks grouped by Epics.
 

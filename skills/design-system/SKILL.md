@@ -215,6 +215,6 @@ After generating, respond with:
 - Safari 16.4+, Chrome 111+, Firefox 128+
 - v4.1 degrades gracefully for older browsers
 
-**Next:** Create component inventory with `/component-inventory`
+**Next:** Break work into tasks with `/task-breakdown`
 
 **File created:** `tasks/design_system.md`"

@@ -96,6 +96,7 @@ Bundled skills, available in every project once the plugin is installed:
 | `red-first` | Regression-test-first bug fixing: failing test before the fix |
 | `brutal-qa` | Adversarial pre-release QA pass with ranked findings |
 | `red-team` | Security audit of your own codebase (find + validate modes) |
+| `performance-audit` | Laravel perf sweep: N+1, indexes, cache, queue candidates → `performance_audit.md` |
 | `vsa` | Vertical Slice Architecture placement and isolation audits |
 | `readability-sweep` | Comment removal, method extraction, naming challenges |
 | `driver` | Scaffold a swappable vendor driver behind an interface |
@@ -111,23 +112,14 @@ SDLC pipeline skills (spec-driven: each reads/writes docs under `tasks/`; fronte
 | `requirements` | Brutally honest analysis of `tasks/requirements.md` → `requirement_analysis.md` |
 | `architecture` | Practical web architecture design → `architecture.md` |
 | `system-design` | Concise system design doc → `system_design.md` |
-| `system-modeling` | Comprehensive UML/system models → `system_model.md` |
-| `system-model-class-er` | Class + ER diagrams → `model_classes_erd.md` |
-| `system-model-behaviour` | Sequence + State diagrams → `model_behavior.md` |
-| `model-use-cases` | Textual use cases → `model_use_cases.md` |
+| `system-modeling` | All UML/system models (use cases, class, sequence, state, ERD) → `system_model.md` |
+| `api-contract` | REST API contract: endpoints, shapes, errors, versioning → `api_contract.md` |
 | `task-breakdown` | Requirements → Epics + task breakdown → `epics.md` (task-manager converts to the board) |
 | `design-user-journey-map` | User journey insights → `user_journeys.md` |
 | `design-information-architecture` | IA / navigation structure → `information_architecture.md` |
 | `design-wireframe` | Page wireframes → `wireframes/<page>.md` |
 | `design-system` | Custom, opinionated Tailwind v4.1+ design system → `design_system.md` |
-| `design-component-inventory` | Prioritized UI component inventory → `component_inventory.md` |
-| `design-component` | UI component generator (detects React/Vue/Blade/Livewire) |
-| `design-page` | Full page from wireframe + existing components (any framework) |
-| `design-vsa-plan` | Frontend Vertical Slice Architecture folder plan → `vsa_structure.md` |
-| `laravel-database` | Laravel 13 schema, migrations + models → `database_design.md` |
-| `laravel-task-plan` | Per-task implementation plan → `plans/<task>_plan.md` |
-| `laravel-code-review` | Task implementation review vs requirements → `reviews/<task>_review.md` |
-| `laravel-security-audit` | Laravel vulnerability scan + fixes → `security_audit.md` |
+| `deployment` | Release procedure: checklist, migration safety, rollback, smoke checks → `deployment.md` |
 
 Plus the **`tuhin` agent** — digital twin of Tuhin Bepari: understands the
 codebase first, maps blast radius, delivers small reviewable parts, tests
