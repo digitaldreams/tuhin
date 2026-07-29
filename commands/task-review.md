@@ -10,5 +10,11 @@ Review `$ARGUMENTS` using the **review** skill, in the reviewer agent's role.
   by the `TASK-<n>` prefix in the PR title.
 - No argument: review the first task with `status: review`.
 - Follow the review skill exactly: gates first, diff-anchored findings, one PR
-  comment, PASS/FAIL verdict, board status update (`done` or `blocked`), notify
-  the human per the task-workflow skill's notification step.
+  comment, PASS/FAIL verdict, notify the human per the task-workflow skill's
+  notification step.
+- The verdict feeds task-workflow steps 8–9: PASS finishes the task (human merge
+  unless `AUTO_MERGE=gated` and every condition holds); FAIL starts a fix round,
+  up to `MAX_REVIEW_ROUNDS`, then `blocked`.
+- Re-running this on a task already past round 1 is a **re-review**: verify the
+  previous round's findings are resolved and look for regressions. New unrelated
+  findings go to `workflow/<TASK-id>-<slug>/backlog.md`, not into this PR.

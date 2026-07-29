@@ -44,7 +44,26 @@ Verdict: PASS | FAIL — <one-line reason>
 
 ## Verdict → board
 
-- **PASS** → task `status: done`. Note "ready for human merge" in the comment —
-  the reviewer never marks the PR ready and never merges.
-- **FAIL** → task `status: blocked` with the findings summary as an indented
-  board comment. Fixes are a new run's job (human resets status after triage).
+The reviewer never marks a PR ready and never merges — it returns a verdict and
+the task-workflow skill acts on it.
+
+- **PASS** → task-workflow step 9 finishes the task (human merge by default;
+  gated merge only if the developer enabled it).
+- **FAIL** → a fix round. The findings go back to the same implementation agent in
+  the same worktree, up to `MAX_REVIEW_ROUNDS` (default 3), then `blocked`.
+
+## Re-review rounds
+
+Round 1 is the full review above. **From round 2 on, review the fixes, not the PR
+afresh:**
+
+1. Verify each finding from the previous round is actually resolved — cite the
+   diff line that resolves it, or repeat the finding.
+2. Look for regressions the fixes introduced.
+3. Anything else you notice goes to `workflow/<TASK-id>-<slug>/backlog.md` and is
+   named in the summary — **not** into this PR. A reviewer that finds six new
+   things every round means the loop never converges and the human never gets a
+   merge.
+
+Write each round's report to `workflow/<TASK-id>-<slug>/review-<n>.md` as well as
+posting it, so the next round can read what the last one asked for.

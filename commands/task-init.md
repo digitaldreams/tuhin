@@ -26,6 +26,13 @@ If a `tasks.md` containing the marker `task-agent:board` exists → leave it,
 report "board present". Otherwise copy the plugin template
 `${CLAUDE_PLUGIN_ROOT}/templates/tasks.md` to the project root.
 
+## 2b. Workflow scratch folder
+
+Create `workflow/` at the repo root (agent-managed working memory: plans, review
+rounds, per-task state). Append `/workflow/` to `.gitignore` if not already
+present — never rewrite the rest of that file. Do not create `workflow/.env`
+here; the first run writes it with documented defaults.
+
 ## 3. SE docs (existing files win)
 
 For each of `requirements.md`, `conventions.md`, `ux_design.md`,
@@ -52,17 +59,19 @@ non-Claude CLIs can follow the same workflow:
 - Block already present → replace only the block content (idempotent re-init).
 
 Block content: a condensed rendition (~40 lines) of the task-workflow skill —
-board format and statuses, sole-writer rule, plan checkpoint with
-`approved: yes`, worktree-per-task, gates (`vendor/bin/pint --test`,
-`php artisan test`, phpstan if present, max 2 fix cycles then blocked), draft
-PR via `gh pr create --draft`, reviewer procedure summary (gates first,
-diff-anchored findings, PASS/FAIL), human merges. Write it from the installed
-skills so it never drifts from the Claude Code behavior.
+board format and statuses, sole-writer rule, untagged task = requirement (intake
+first, tag comes from the plan), plan checkpoint with `approved: yes`,
+worktree-per-task, `workflow/` scratch folder passed by absolute path, gates
+(`vendor/bin/pint --test`, `php artisan test`, phpstan if present, max 2 fix
+cycles then blocked), draft PR via `gh pr create --draft`, reviewer procedure
+summary (gates first, diff-anchored findings, PASS/FAIL), bounded fix rounds,
+human merges. Write it from the installed skills so it never drifts from the
+Claude Code behavior.
 
 ## 5. Commit the board
 
-Stage and commit ONLY files this init created or modified (`tasks.md`, new
-`docs/` files, `AGENTS.md`, `GEMINI.md`):
+Stage and commit ONLY files this init created or modified (`tasks.md`,
+`.gitignore`, new `docs/` files, `AGENTS.md`, `GEMINI.md`):
 `git commit -m "chore: initialize task-agent workflow"`.
 Dirty unrelated working tree → leave those files alone and commit only ours.
 If an `origin` remote exists, push the base branch afterwards — an unpushed
@@ -70,7 +79,10 @@ init commit would otherwise bleed into every task PR's diff.
 
 ## 6. Report
 
-Summary table: prerequisite results, each file created / reused / skipped,
-then next steps: fill the human-owned docs, seed a task in tasks.md, run
-`/task-agent:task-next` (mention cron and `/loop` recipes from the plugin
-README for hands-off dispatch).
+Summary table: prerequisite results, each file created / reused / skipped, then
+next steps. Say the two ways to seed work in one line each — a tagged task goes
+straight to code, an untagged paragraph gets a requirement engineer first — then:
+`/tuhin:task-next` to advance one phase, `/tuhin:task-auto` to run hands-off
+(never both at once), `/tuhin:task-status` to see the board. Mention that
+`workflow/.env` appears on the first run and holds the plan-gate and merge
+settings, and point at the plugin README for the cron recipe.
