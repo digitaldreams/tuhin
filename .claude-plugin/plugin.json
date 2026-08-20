@@ -1,7 +1,7 @@
 {
   "name": "tuhin",
   "displayName": "Tuhin",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Tuhin's dev identity as a plugin: a task board where an untagged paragraph becomes a plan (requirement engineer: analysis, validation, feasibility, sizing, architecture deltas) and a tagged task becomes code — worktrees, Pint/Pest/PHPStan gates, draft PRs, bounded review-and-fix rounds, optional gated merge, hands-off /task-auto loop. Plus personal engineering skills (blast-radius, red-first, quality-audit, security-audit, performance-audit, vsa, readability-sweep, and more), a core SDLC pipeline (requirements → architecture → system design/model → api contract → task breakdown → UX design → deployment) and the tuhin digital-twin implementation agent. Pairs with Laravel Boost: Boost owns knowledge, this plugin owns process.",
   "author": {
     "name": "Tuhin Bepari",
