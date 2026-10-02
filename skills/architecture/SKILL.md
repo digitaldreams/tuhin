@@ -47,6 +47,8 @@ Rules: never silently pick; the user's answers are binding. Database, cache, and
 
 Common combinations: Modular Monolith + VSA, Modular Monolith + DDD, Microservices + Event-Driven, Layered + DDD.
 
+Symfony + DDD chosen → implementation follows the `ddd-symfony` skill (building blocks, Doctrine wiring, audit rules).
+
 ## Output: tasks/architecture.md
 
 Create `tasks/architecture.md` with:
