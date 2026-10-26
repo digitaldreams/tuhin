@@ -470,6 +470,32 @@ challenges bad names.
 > /tuhin:readability-sweep app/Modules/Catalog
 ```
 
+**symfony-ai-platform / symfony-ai-agent / symfony-ai-chat** — reference for the
+Symfony AI components: `PlatformInterface::invoke`, structured output, tool calling,
+agents, chat history stores, the AI Bundle wiring, and the API drift between minor
+versions. Loads itself when the code touches `Symfony\AI\*`.
+
+```console
+> /tuhin:symfony-ai-agent add a tool that searches the article store
+```
+
+**system-one** — reference for System One decision models (Ollama `nimble`/`clef`,
+TypeSafe Jev): yes/no, choice and score answers with a confidence, for judgments your
+code consumes instead of text. Cheap first-pass classifier or judge.
+
+```console
+> /tuhin:system-one route support tickets by intent with a confidence gate
+```
+
+**llm-eval** — measure an LLM feature instead of vibe-checking it: read real outputs,
+build planted-defect cases, an `app:eval` command, a calibrated judge, a red-team set.
+Recall and false alarms with an interval, not "looks good". The runner targets
+Symfony AI; the rules work on any stack.
+
+```console
+> /tuhin:llm-eval is my final_check agent any good?
+```
+
 ## Before you ship
 
 Four auditors. None of them polite.

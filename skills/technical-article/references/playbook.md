@@ -98,6 +98,12 @@ Before planning, study the topic the way an expert developer would. The article 
 - **Thread lines:** one sentence that repeats the hook across sections ("No `use Symfony…`. Just plain PHP.").
 - **Simple analogies** for abstract ideas (islands with paper boats, a coffee maker), always tied back to the running example.
 - **Framework-neutral bridge:** after a framework-specific step, one line for other stacks: "In Laravel, this is a service provider binding; the idea is the same."
+- **Pain-scene hook:** "Picture this: …" a scene the reader lives through, then "Sound familiar?" (VSA article). An alternative to the "Remember the last time…?" question.
+- **Clear the misconception first:** "Forget about network firewalls for a second." One line that sets aside the wrong mental model before the right one.
+- **Components speak:** in a big-picture recap, give each part its own short line in quotes: Firewall — "Should I authenticate this request?", Authenticator — "I can handle this type of credentials".
+- **Need → tool lines:** "Want JWT? Custom authenticator. Need to check account expiry? User checker." Turns the concepts into a quick lookup.
+- **Decision list + trade-offs:** "Use X when: … / Stick with Y when: …" with concrete thresholds (20+ features, 5+ developers), plus a "Trade-offs You Need to Know" section with **bold labels**. Every recommendation also says when not to use it.
+- **Closing aphorism:** one short two-part line that sums up the article: "The documentation explains what to do. The source code explains why." / "Business lasts for years. Frameworks come and go."
 
 ---
 
