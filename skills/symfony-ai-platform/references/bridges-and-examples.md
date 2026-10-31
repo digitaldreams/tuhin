@@ -10,7 +10,9 @@ All under `Symfony\AI\Platform\Bridge\<Name>`, each with a `Factory` exposing `c
 | `Anthropic` | `symfony/ai-platform` | Claude, prompt caching, server tools |
 | `Gemini` | `symfony/ai-gemini-platform` | Gemini chat, embeddings, voice, server tools |
 | `VertexAi` | `symfony/ai-platform` | Gemini + Vertex Gen AI on GCP |
-| `Ollama` | `symfony/ai-ollama-platform` | any local Ollama model; live catalog |
+| `Ollama` | `symfony/ai-ollama-platform` | any local Ollama model; live catalog; decision models (`nimble`, `clef`, `clef-flash`) from 0.15 |
+| `Decision` | `symfony/ai-decision-platform` | shared decision value objects (`Evaluation`, questions, `Answers`); no backend of its own |
+| `TypeSafe` | `symfony/ai-type-safe-platform` | hosted Jev decision models |
 | `Bedrock` | `symfony/ai-platform` | Claude, Nova, Llama on AWS |
 | `Azure` | `symfony/ai-platform` | GPT + Llama deployments |
 | `Mistral` | `symfony/ai-platform` | chat, embeddings, OCR, audio |
@@ -80,6 +82,7 @@ Grouped by what you'd be looking for rather than by provider — most patterns e
 | partial JSON from a stream | `platform/partial-json-stream.php` |
 | polymorphic / union types | `openai/structured-output-list-of-polymorphic-items.php`, `openai/structured-output-union-types.php` |
 | custom schema provider | `openai/structured-output-schema-provider.php` |
+| decision model (choice/score/noul) | `ollama/decision.php`, `typesafe/evaluate.php` |
 
 ### Tool calling (Agent component)
 

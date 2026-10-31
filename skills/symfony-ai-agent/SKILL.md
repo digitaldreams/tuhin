@@ -1,6 +1,6 @@
 ---
 name: symfony-ai-agent
-description: Reference for the Symfony AI Agent component (symfony/ai-agent) — Agent over a Platform, the tool-calling loop, Toolbox and #[AsTool], JSON-schema tool parameters, tool lifecycle events and human-in-the-loop denial, input/output processors, memory providers, MultiAgent handoffs, SpeechAgent, MockAgent, RAG via SimilaritySearch, the AI Bundle agent config, and the 0.12 vs 0.13 Execution rewrite. Use whenever the work involves Symfony\AI\Agent classes, tool calling from a Symfony app, agent processors, multi-agent routing, or wiring symfony/ai-agent into a project.
+description: Reference for the Symfony AI Agent component (symfony/ai-agent) — Agent over a Platform, the tool-calling loop, Toolbox and #[AsTool], JSON-schema tool parameters, tool lifecycle events and human-in-the-loop denial, input/output processors, memory providers, MultiAgent handoffs (incl. a decision-model orchestrator), SpeechAgent, MockAgent, RAG via SimilaritySearch, the AI Bundle agent config, and the 0.12 vs 0.13 Execution rewrite. Use whenever the work involves Symfony\AI\Agent classes, tool calling from a Symfony app, agent processors, multi-agent routing, or wiring symfony/ai-agent into a project.
 ---
 
 # Symfony AI — Agent component
@@ -337,9 +337,50 @@ $multi = new MultiAgent(
 );
 ```
 
-The orchestrator is asked, with `response_format: Decision::class`, to pick an agent by name; the named handoff target runs; anything unmatched goes to `fallback` (required). `when` is a keyword list — it is prompt material, not a matcher, so the orchestrator model decides. At least one handoff is required or the constructor throws. A failed decision falls back to the orchestrator itself answering.
+The orchestrator is called once with a built selection prompt (`User question: "…"`, one `- <agent name>: <when, when>` line per handoff, a last line for the fallback) and `response_format: Handoff\Decision::class` (`agentName`, `reasoning`). `when` is a keyword list — prompt material, not a matcher. At least one handoff is required or the constructor throws. What happens next:
 
-`MultiAgent` implements `AgentInterface`, so it composes anywhere an agent does.
+| Orchestrator result | Who answers | With what input |
+|---|---|---|
+| not a `Decision` object | the orchestrator itself | full original messages |
+| `Decision` with `agentName: ''` | `fallback` | full original messages |
+| name matching no handoff's `getName()` | `fallback` | full original messages |
+| name of a handoff target | that agent (`Progress` stage `handoff`) | **only the first user message** — history, later turns and system messages are dropped |
+
+"First" is literal: `MultiAgent` uses `MessageBag::getUserMessage()`, which returns the **first** `UserMessage`. Behind `Chat` (full history in the bag) both routing and the handoff see turn one, not the new question. For multi-turn routing, call `MultiAgent` with only the latest user message, or route yourself.
+
+`MultiAgent` implements `AgentInterface`, so it composes anywhere an agent does — and the orchestrator can be any `AgentInterface`, not only an LLM `Agent`.
+
+### Decision-model orchestrator
+
+A decision model (`symfony-ai-platform` skill → Decision models) cannot be an agent's model, but it can route: wrap it in a small `AgentInterface` that turns the selection prompt into a `ChoiceQuestion` and returns a `Decision`. Faster and cheaper than an LLM picking, and it comes with a confidence to gate on.
+
+```php
+final class DecisionOrchestrator implements AgentInterface
+{
+    public function __construct(private PlatformInterface $platform, private string $model, private float $minConfidence = 0.6) {}
+
+    public function call(string|MessageBag|UserMessage $input, array $options = []): Execution
+    {
+        return new Execution(function () use ($input): \Generator {
+            $prompt = InputNormalizer::toMessageBag($input)->getUserMessage()->asText();
+            // ponytail: parses MultiAgent's prompt text; a change there breaks this, so cover it with a test that runs a real MultiAgent
+            preg_match('/User question: "(.*)"\n\nAvailable agents/s', $prompt, $question);
+            preg_match_all('/^- ([^:\n]+): (.+)$/m', $prompt, $agents);
+
+            $choice = $this->platform->invoke($this->model, new Evaluation(['request' => $question[1]], [
+                'agent' => new ChoiceQuestion('Which agent should handle `request`?', array_combine($agents[1], $agents[2])),
+            ]))->asObject(Answers::class)->getChoice('agent');
+
+            $name = $choice->getConfidence() >= $this->minConfidence ? $choice->getChoice() : '';   // '' → fallback
+            yield new ResultUpdate(new ObjectResult(new Decision($name, sprintf('confidence %.2f', $choice->getConfidence()))));
+        });
+    }
+
+    public function getName(): string { return 'decision_orchestrator'; }
+}
+```
+
+The fallback line is one of the options, so the model can pick it directly; low confidence also lands there. The bundle prefixes every `multi_agent` orchestrator/handoff/fallback name with `ai.agent.` unless it already starts with it, so a plain class id does not resolve: give the service an `ai.agent.` id (`#[AsAlias('ai.agent.decision_orchestrator')]`) and set `orchestrator: 'decision_orchestrator'`, or construct `MultiAgent` yourself. Test it with `MockPlatformFactory` returning `new ObjectResult(new Answers(['agent' => new ChoiceAnswer(…)]))`: one test at high confidence (routes to the handoff), one at low (fallback).
 
 ## SpeechAgent
 
@@ -374,7 +415,7 @@ $agent->assertCalledWith('What is Symfony?');
 $agent->getCalls(); $agent->getLastCall(); $agent->reset();
 ```
 
-Also `MockResponse` objects and callables for dynamic answers. For platform-level doubles (`InMemoryPlatform`, `MockPlatformFactory`, cassettes) see the `symfony-ai-platform` skill.
+Also `MockResponse` objects and callables for dynamic answers. For platform-level doubles (`MockPlatformFactory`, cassettes; `InMemoryPlatform` is gone in 0.15) see the `symfony-ai-platform` skill.
 
 ## In a Symfony app (AI Bundle)
 
@@ -413,7 +454,7 @@ ai:
             fallback: 'general_support'
 ```
 
-Service id is `ai.agent.<key>`. Handoff keys are auto-prefixed with `ai.agent.`. **Tools are opt-in** — an agent with no `tools:` key gets none; `tools: true` injects all, `tools: false` is explicit none.
+Service id is `ai.agent.<key>`. Orchestrator, handoff and fallback names are auto-prefixed with `ai.agent.` (unless already prefixed). **Tools are opt-in** — an agent with no `tools:` key gets none; `tools: true` injects all, `tools: false` is explicit none.
 
 Bundle rename in 0.13: `keep_tool_messages` → `exclude_tool_messages`. The old name was inverted against its behavior since 0.4, so `keep_tool_messages: true` was in fact *excluding* them.
 

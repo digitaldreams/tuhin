@@ -23,6 +23,8 @@ Two providers, same wire shape:
 | Extra field | `keep_alive` (`"5m"`, seconds, `0` unload, negative = keep) | — |
 | Cost | free | $0.042 / M input tokens, output free |
 
+**PHP / Symfony:** use Symfony AI 0.15+ (`symfony/ai-decision-platform` + the Ollama or TypeSafe bridge), not raw HTTP; classes, wiring and tests are in the `symfony-ai-platform` skill → Decision models, routing between agents in `symfony-ai-agent` → MultiAgent. This skill stays the source for question design and measured limits.
+
 Details: [references/api.md](references/api.md) (both HTTP APIs + Python/JS SDKs). Worked examples: [references/examples.md](references/examples.md).
 Real nimble runs on invented products (exact request + response, timings, ground truth): [examples/ollama/](examples/ollama/) — 10 object criteria → 400 · 11 structured e-commerce 11/11 · 12 weak spots (dates/math/negation/quantifiers) 7/10 · 13 support ticket routing + guardrail 6/7.
 

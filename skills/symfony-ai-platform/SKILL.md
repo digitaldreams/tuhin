@@ -1,6 +1,6 @@
 ---
 name: symfony-ai-platform
-description: Reference for the Symfony AI Platform component (symfony/ai-platform) — the provider-agnostic layer under symfony/ai. Covers PlatformInterface::invoke, DeferredResult and its as*() readers, MessageBag and content types, streaming deltas, options, Contract and custom normalizers, model catalogs, structured output, CachePlatform/FailoverPlatform, the testing doubles, the AI Bundle wiring, and the 0.12 vs 0.13 API drift. Use whenever the work involves symfony/ai, symfony/ai-platform, symfony/ai-agent, symfony/ai-chat, symfony/ai-bundle, Symfony\AI\Platform classes, or wiring an LLM (Ollama, Gemini, OpenAI, Anthropic, …) into a Symfony app.
+description: Reference for the Symfony AI Platform component (symfony/ai-platform) — the provider-agnostic layer under symfony/ai. Covers PlatformInterface::invoke, DeferredResult and its as*() readers, MessageBag and content types, streaming deltas, options, Contract and custom normalizers, model catalogs, structured output, CachePlatform/FailoverPlatform, the testing doubles, the AI Bundle wiring, decision models (System One: Evaluation, Choice/Noul/Score questions, Answers on Ollama nimble/clef or TypeSafe Jev), and the 0.12 → 0.15 API drift. Use whenever the work involves symfony/ai, symfony/ai-platform, symfony/ai-agent, symfony/ai-chat, symfony/ai-bundle, Symfony\AI\Platform classes, or wiring an LLM (Ollama, Gemini, OpenAI, Anthropic, …) into a Symfony app — and whenever code needs a typed judgment (route, classify, yes/no, score, gate) rather than generated text.
 ---
 
 # Symfony AI — Platform component
@@ -269,6 +269,83 @@ $obj = $result->asObject();                                   // MathReasoning i
 
 Streaming it: `['stream' => true, 'response_format' => Recipe::class]` then `foreach ($result->asStreamedObject() as $snapshot)`, or `asPartialJsonStream()` for raw progressive JSON. `PartialJsonParser::parse($buffer, $error)` is the standalone piece.
 
+## Decision models (0.15+)
+
+A decision ("System One") model takes one `state` and named typed questions, answers every question independently, and returns typed answers with probabilities. It never generates text. Code owns the control flow; the model only makes narrow judgments.
+
+**Use it when** code will branch on the answer: route a request (Choice → `match`), gate an action (Noul → `if`), rank or threshold (Score). It is cheaper and faster than an LLM with `response_format`, and you get probabilities and a confidence instead of a guess.
+
+**Do not use it for:** anything that writes text (use an LLM; the decision model may pick among LLM candidates), math, date comparison, negation and "every/all" quantifiers (do those in code), or a large state (nimble: ~8k tokens per question prompt, state included).
+
+| | Decision model | LLM + `response_format` |
+|---|---|---|
+| Output | probabilities + confidence per question | one generated object |
+| Several judgments | one request, questions run in parallel | one prompt, answers influence each other |
+| Can run in an `Agent` | **no** (no messages, tools, streaming) | yes |
+
+### Install
+
+`composer require symfony/ai-decision-platform` (shared value objects) plus a bridge that serves decision models:
+
+- **Ollama** (`symfony/ai-ollama-platform` ≥ 0.15, Ollama server ≥ 0.35.0): local `nimble`, `clef`, `clef-flash`. No config: `ModelCatalog` sees the `decision` capability in `/api/show`, builds a `Bridge\Ollama\Decision` model, and `DecisionModelClient` calls `POST /v1/systemone`. Your existing `ai.platform.ollama` works. Without the decision package the bridge throws `…requires the Decision bridge. Try running "composer require symfony/ai-decision-platform"`.
+- **TypeSafe** (`symfony/ai-type-safe-platform` ≥ 0.15 for the `Bridge\Decision` classes): hosted Jev (`jev-latest`, `jev-preview`, `jev-1.13.0`), static catalog. Bundle: `ai: { platform: { typesafe: { api_key: '%env(TYPESAFE_API_KEY)%' } } }` → `ai.platform.typesafe`.
+
+### Use
+
+```php
+use Symfony\AI\Platform\Bridge\Decision\Answer\Answers;
+use Symfony\AI\Platform\Bridge\Decision\Evaluation;
+use Symfony\AI\Platform\Bridge\Decision\Question\ChoiceQuestion;
+use Symfony\AI\Platform\Bridge\Decision\Question\NoulQuestion;
+use Symfony\AI\Platform\Bridge\Decision\Question\ScoreQuestion;
+
+$result = $platform->invoke('nimble', new Evaluation($ticket, [      // state: string or array
+    'team' => new ChoiceQuestion('Which team should handle this ticket?', [
+        'billing'   => 'Payments, invoices and refunds',
+        'technical' => 'Bugs or integration problems',
+        'other'     => null,                                          // null = bare label; keep an escape option
+    ]),
+    'urgency' => new ScoreQuestion('How urgently does this need a response?', [
+        'Routine: no time pressure',                                  // index 0 = lowest
+        'Soon: a customer is inconvenienced',
+        'Immediate: a critical service is down',
+    ]),
+    'refund' => new NoulQuestion('Is the customer asking for a refund?'),
+]));
+
+$answers = $result->asObject(Answers::class);
+
+$team = $answers->getChoice('team');     // ->getChoice(), ->getProbabilities(), ->getConfidence()
+$urgency = $answers->getScore('urgency'); // ->getScore() (0…levels-1, weighted mean), ->getLegend(), ->getConfidence()
+$refund = $answers->getNoul('refund');   // ->getProbability() = P(yes), ->isTrue(0.5)
+$result->getMetadata()->get('token_usage');
+```
+
+`Answers::get()/getChoice()/…` throw `InvalidArgumentException` on an unknown id or the wrong type. `Evaluation` needs ≥ 1 question, `ChoiceQuestion` ≥ 1 option, `ScoreQuestion` ≥ 2 levels.
+
+### Rules
+
+- **Call the platform directly.** A decision model cannot be an agent's `model` (the Ollama `Decision` model has zero capabilities on purpose). Put the call in a service, not in `ai.yaml` `agent:`.
+- **Stay platform-independent:** inject `PlatformInterface` + the model name, and use only `Evaluation`/`Answers`. Ollama ↔ TypeSafe is then config: `#[Autowire(service: 'ai.platform.ollama')] PlatformInterface $platform, #[Autowire(env: 'AI_DECISION_MODEL')] string $model`.
+- **Batch.** All questions about one state go in one `Evaluation`; they run in parallel. A question that depends on another's answer needs a second call.
+- **The model never sees the question id.** Put the whole question in the instructions. Instructions may be an array to structure data: `['claim' => $claim, 'question' => 'Is `claim` supported by the state?']`.
+- **Gate on confidence** for Choice/Score: act when high, fall back (bigger model, human, default) when low. ~0.6 worked for nimble Choices; confidence is peakedness, not correctness, and Ollama and TypeSafe compute it differently — calibrate on your own data. A Noul has no confidence; a middling probability (0.3–0.7) is the warning sign.
+- **Ollama limits the bridge does not check:** Choice and Score take 2–26 options (TypeSafe Score: 2–10), body ≤ 64 KiB. A 1-option `ChoiceQuestion` builds fine and fails at runtime with a 400.
+- **Ollama errors** go through the usual mapping: 400 (bad question, prompt over the context) → `BadRequestException`, 404 (model not pulled) → `ModelNotFoundException`, 5xx → `ServerException` (retryable), other non-200 (413 too large) → `RuntimeException` with Ollama's `error` text.
+- **No per-call options.** `DecisionModelClient` ignores `$options`, so `keep_alive` cannot be sent; an idle model unloads after Ollama's default 5 minutes and the next call pays the cold load.
+
+Test with a fake answer — no model call:
+
+```php
+MockPlatformFactory::createPlatform(fn () => new ObjectResult(new Answers([
+    'team' => new ChoiceAnswer('billing', ['billing' => 0.9, 'technical' => 0.1], 0.8),
+    'refund' => new NoulAnswer(0.97),
+    'urgency' => new ScoreAnswer(1.2, ['0' => 'Routine…', '1' => 'Soon…', '2' => 'Immediate…'], ['0' => 0.1, '1' => 0.6, '2' => 0.3], 0.4),
+])));
+```
+
+Writing good questions, measured nimble limits and the raw HTTP API: the `system-one` skill. Examples: `examples/ollama/decision.php`, `examples/typesafe/evaluate.php`.
+
 ## Platform decorators
 
 ```php
@@ -282,15 +359,14 @@ new TraceablePlatform($platform);                                    // profiler
 ## Testing
 
 ```php
-new InMemoryPlatform('Fake result');
-new InMemoryPlatform(fn ($model, $input, $options) => "Echo: {$input}");
-new InMemoryPlatform(fn () => new VectorResult([new Vector([0.1, 0.2, 0.3])]));
-new InMemoryPlatform(fn () => new BinaryResult('pdf-bytes', 'application/pdf'));
-
 MockPlatformFactory::createPlatform('Mock result');
 MockPlatformFactory::createPlatform(['gpt-4o-mini' => 'cheap', 'gpt-4o' => 'expensive']);
 MockPlatformFactory::createPlatform(fn () => new ObjectResult((object) ['city' => 'Paris']));
+MockPlatformFactory::createPlatform(fn () => new VectorResult([new Vector([0.1, 0.2, 0.3])]));
+MockPlatformFactory::createPlatform(fn () => new BinaryResult('pdf-bytes', 'application/pdf'));
 ```
+
+`InMemoryPlatform` (≤ 0.14) is gone in 0.15 — use `MockPlatformFactory`. Its closure gets the model and the **normalized payload**, not your `MessageBag`; a test that inspects the input as a bag needs its own small `PlatformInterface` that runs the closure before delegating.
 
 For real traffic recorded once and replayed forever, wrap a provider in `RecordingProvider` with a `Cassette`, or the HTTP client in `CassetteHttpClient` with an `HttpCassette` — the monorepo's own examples do the latter, driven by a `CASSETTE=record|replay` env var. One cassette per run means one shared client instance: appends accumulate, replay consumes FIFO.
 
@@ -326,6 +402,10 @@ The **Platform** component is stable across 0.12 → 0.13: `PlatformInterface`, 
 - A tool-calling round now adds **one** assistant message per turn (text + thinking + tool calls together) instead of splitting it.
 - Bundle: agent option `keep_tool_messages` renamed to `exclude_tool_messages` — the old name was inverted against its behavior.
 
+**0.14** added the TypeSafe bridge, with its value objects under `Bridge\TypeSafe\…`.
+
+**0.15** moved those to `symfony/ai-decision-platform` (`Bridge\Decision\…`; BC break, no aliases — fix the `use` lines), added Ollama decision models (`decision` capability), added `asObject(Foo::class)` on `DeferredResult` and `Execution`, and removed `InMemoryPlatform` (use `MockPlatformFactory`).
+
 `InputProcessorInterface` / `OutputProcessorInterface` survive; only the toolbox processor went away. That keeps the standard trick working: `Chat::submit()` calls `Agent::call()` with no options, so **an input processor is the only place to set per-call model options** on the Agent path.
 
 ```php
@@ -351,10 +431,14 @@ final class DefaultInvocationOptions implements InputProcessorInterface
 - **Custom normalizers must not be autoconfigured services** — they would join the app-wide serializer.
 - **`MessageBag::with()` vs `add()`** — the first copies, the second mutates. In a loop over prompts you want `with()`.
 - Seeds and other large ints: check the bridge; some encode options through JSON where doubles lose precision.
+- **A decision model in `ai.yaml` `agent:` does not work.** Invoke the platform with an `Evaluation`; route between agents with a decision-model orchestrator (`symfony-ai-agent` skill → MultiAgent).
+- **Confidence ≠ correctness.** A wrong Choice can come back at 0.99 when the question word is ambiguous. Gate on it, but test the gate.
 - `Message::ofAssistant()` accepts a `ResultInterface` directly, which is the cheapest correct way to append a finished turn (thinking signatures included) to the bag.
 
 ## Siblings
 
 `symfony/ai-agent` (tool calling, processors, multi-agent), `symfony/ai-chat` (`Chat` + `MessageStoreInterface` persistence — session, cache, Doctrine DBAL, Redis, MongoDB, …), `symfony/ai-store` (vector stores + RAG indexers, ~25 backends), `symfony/ai-bundle` (DI wiring), `symfony/mcp-bundle`, `symfony/ai-mate`.
+
+`system-one` skill — decision-model question design, measured limits, raw `/v1/systemone` API.
 
 `references/bridges-and-examples.md` in this skill — bridge/factory table, and the example-script index from the monorepo mapped by topic.
